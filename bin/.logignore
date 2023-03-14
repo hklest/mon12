@@ -1,0 +1,10 @@
+^MnHesse
+^FunctionMinimum
+^VariableMetricBuilder
+^gdel
+^matrix forced pos-def
+^negative or zero diagonal
+^added
+^eigenvalue
+^[0-9]+\.[0-9]+$
+^-[0-9]+\.[0-9]+$

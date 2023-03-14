@@ -8,20 +8,6 @@ $dir/mon12 \
  -autosave 15000 \
  -outDir /local/baltzell/hydra/images \
  $* \
-<<<<<<< HEAD
  2>&1 \
 | grep -v -E -f $dir/.logignore
-=======
- 2>&1
->>>>>>> 0e536ce617e3716b27fe812c7d3106bca35ba3c4
 
-#| grep -v '^MnHesse' \
-#| grep -v '^FunctionMinimum' \
-#| grep -v '^VariableMetricBuilder' \
-#| grep -v '^gdel:' \
-#| grep -v '^gdel > ' \
-#| grep -v '^matrix forced pos-def'  \
-#| grep -v '^negative or zero diagonal' \
-#| grep -v '^added' \
-#| grep -v '^eigenvalue' \
-#| grep -v -E '^a[0-9]+.[0-9]+$'

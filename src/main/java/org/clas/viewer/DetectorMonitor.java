@@ -88,7 +88,7 @@ public class DetectorMonitor implements IDataEventListener, ActionListener {
         GStyle.getAxisAttributesZ().setTitleFontName("Avenir");
         GStyle.setGraphicsFrameLineWidth(1);
         GStyle.getH1FAttributes().setLineWidth(1);
-//        GStyle.getH1FAttributes().setOptStat("1111111");
+        GStyle.getH1FAttributes().setOptStat("1111111");
 
         this.detectorName = name;
         this.detectorPanel = new JPanel();

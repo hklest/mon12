@@ -449,7 +449,7 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
             }
             for (String key : this.monitors.keySet()) {
                 if (this.monitors.get(key).isActive()) {
-                    ret.putAll(this.monitors.get(key).printCanvas(dir, tstamp));
+                    ret.putAll(this.monitors.get(key).printCanvas(dir));
                 }
             }
         }

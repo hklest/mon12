@@ -88,7 +88,7 @@ public class DetectorMonitor implements IDataEventListener, ActionListener {
         GStyle.getAxisAttributesZ().setTitleFontName("Avenir");
         GStyle.setGraphicsFrameLineWidth(1);
         GStyle.getH1FAttributes().setLineWidth(1);
-        GStyle.getH1FAttributes().setOptStat("1111111");
+//        GStyle.getH1FAttributes().setOptStat("1111111");
 
         this.detectorName = name;
         this.detectorPanel = new JPanel();
@@ -333,7 +333,7 @@ public class DetectorMonitor implements IDataEventListener, ActionListener {
     public void plotHistos() {
     }
 
-    public LinkedHashMap<String, String> printCanvas(String dir, String timestamp) {
+    public LinkedHashMap<String, String> printCanvas(String dir) {
         // print canvas to files
         LinkedHashMap<String, String> prints = new LinkedHashMap<>();
         int nsec = 2;
@@ -342,9 +342,9 @@ public class DetectorMonitor implements IDataEventListener, ActionListener {
             this.setActiveSector(sec);
             this.plotHistos();
             for (int tab = 0; tab < this.detectorTabNames.size(); tab++) {
-                String name = this.detectorTabNames.get(tab);
+                String name = this.detectorName + "_" + this.detectorTabNames.get(tab);
                 if(name.endsWith("_s")) name += sec;
-                String fileName = dir + "/" + this.detectorName + "_" + name + ".png";
+                String fileName = dir + "/" + name + ".png";
                 if(!prints.containsKey(fileName)) {
                     System.out.println(fileName);
                     this.detectorCanvas.getCanvas(this.getCanvasTabName(this.detectorTabNames.get(tab))).save(fileName);

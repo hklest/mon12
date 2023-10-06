@@ -830,6 +830,7 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         parser.addOption("-ethost",   "clondaq6",       "Select ET host name");
         parser.addOption("-etip",     "129.57.167.60",  "Select ET host name");
         parser.addOption("-autosave", "-1",             "Autosave every N events (e.g. for Hydra)");
+        parser.addOption("-batch",    "0",              "Connect and run automatically");
         parser.addOption("-outDir",   null,             "Path for output PNG/HIPO files");
         parser.parse(args);
 
@@ -895,6 +896,13 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         frame.setJMenuBar(viewer.menuBar);
         frame.setSize(xSize, ySize);
         frame.setVisible(true);
+        
+        if (parser.getOption("-batch") != null) {
+            String h = parser.getOption("-ethost").stringValue();
+            String i = parser.getOption("-etip").stringValue();
+            viewer.processorPane.connectAndRun(i,"11111","/et/clasprod");
+        }
+
     }
 
     @Override

@@ -830,7 +830,7 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         parser.addOption("-ethost",   "clondaq6",       "Select ET host name");
         parser.addOption("-etip",     "129.57.167.60",  "Select ET host name");
         parser.addOption("-autosave", "-1",             "Autosave every N events (e.g. for Hydra)");
-        parser.addOption("-batch",    "0",              "Connect and run automatically");
+        parser.addOption("-batch",    null,             "Connect and run automatically");
         parser.addOption("-outDir",   null,             "Path for output PNG/HIPO files");
         parser.parse(args);
 

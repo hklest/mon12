@@ -6,6 +6,7 @@ $dir/mon12 \
  -tabs "BMT:BST:CND:CTOF:DC:ECAL:FTCAL:FTHODO:FTOF:FTTRK:HTCC:LTCC:RASTER:RICH:RF:HEL:Trigger:TimeJitter" \
  -trigger 0x1 \
  -autosave 15000 \
+ -batch 1 \
  -outDir /local/baltzell/hydra/images \
  $* \
  2>&1 \

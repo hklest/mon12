@@ -4,11 +4,13 @@ dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 $dir/mon12 \
  -tabs "BAND:BMT:BST:CND:CTOF:DC:ECAL:FMT:FTOF:HTCC:LTCC:RICH:RF:HEL:Trigger:TimeJitter" \
- -trigger 0x1 \
+ -trigger 0x4000 \
  -autosave 15000 \
  -batch 1 \
  -outDir /local/baltzell/hydra/images \
  $* \
  2>&1 \
 | grep -v -E -f $dir/.logignore
+
+#-trigger 0x1 \
 

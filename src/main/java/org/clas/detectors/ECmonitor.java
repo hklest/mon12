@@ -22,7 +22,8 @@ public class ECmonitor  extends DetectorMonitor {
     public ECmonitor(String name) {
         super(name);
 
-        this.setDetectorTabNames("adcOccupancy","tdcOccupancy", "adcSum", "adcEnergy_s", "adcTime_s", "tdc_s");
+//        this.setDetectorTabNames("adcOccupancy","tdcOccupancy", "adcSum", "adcEnergy_s", "adcTime_s", "tdc_s");
+        this.setDetectorTabNames("adcOccupancy","tdcOccupancy", "adcEnergy_s", "adcTime_s", "tdc_s");
         this.useSectorButtons(true);
         this.init(false);
         this.getCcdb().setVariation("default");
@@ -48,9 +49,9 @@ public class ECmonitor  extends DetectorMonitor {
         this.getDetectorCanvas().getCanvas("tdc").divide(3, 3);
         this.getDetectorCanvas().getCanvas("tdc").setGridX(false);
         this.getDetectorCanvas().getCanvas("tdc").setGridY(false);
-        this.getDetectorCanvas().getCanvas("adcSum").divide(3, 2);
-        this.getDetectorCanvas().getCanvas("adcSum").setGridX(false);
-        this.getDetectorCanvas().getCanvas("adcSum").setGridY(false);
+//        this.getDetectorCanvas().getCanvas("adcSum").divide(3, 2);
+//        this.getDetectorCanvas().getCanvas("adcSum").setGridX(false);
+//        this.getDetectorCanvas().getCanvas("adcSum").setGridY(false);
         
         DataGroup sum = new DataGroup(1,1);
        
@@ -162,9 +163,9 @@ public class ECmonitor  extends DetectorMonitor {
         }
         
         for(int sector=1; sector<7; sector++) {
-            this.getDetectorCanvas().getCanvas("adcSum").cd(sector-1);
-            this.getDetectorCanvas().getCanvas("adcSum").getPad(sector-1).getAxisZ().setLog(getLogZ());
-            this.getDetectorCanvas().getCanvas("adcSum").draw(this.getDataGroup().getItem(sector,0,0).getH2F("mipADC"+sector));
+//            this.getDetectorCanvas().getCanvas("adcSum").cd(sector-1);
+//            this.getDetectorCanvas().getCanvas("adcSum").getPad(sector-1).getAxisZ().setLog(getLogZ());
+//            this.getDetectorCanvas().getCanvas("adcSum").draw(this.getDataGroup().getItem(sector,0,0).getH2F("mipADC"+sector));
             if(getActiveSector()==sector) {
                for(int layer=1; layer <= 9; layer++) {
                    this.getDetectorCanvas().getCanvas("adcEnergy").cd((layer-1)+0);

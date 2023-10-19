@@ -38,7 +38,7 @@ public class RICHmonitor  extends DetectorMonitor {
     private static final double PIXELSIZE    = 1;
     private static final double PMTCLEARANCE = 1;
   
-    private static final double LE  = 111;
+    private static final double LE  = 110;
     private static final double TOT = 58;
     private static final double XT  = 30;
     private final int[] CHAN2PIX = {60, 58, 59, 57, 52, 50, 51, 49, 44, 42, 43, 41, 36, 34, 35, 33, 28, 26, 27, 25, 20, 18, 19, 17, 12, 10, 

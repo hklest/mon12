@@ -846,6 +846,7 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         parser.getOption("-etip").stringValue());
 
         if (parser.getOption("-current").doubleValue() > 0) {
+            System.out.println(String.format("setting minimum beam current from EPICS of %.1f nA",parser.getOption("-current").doubleValue()));
             viewer.beamMonitor = new BeamMonitor((float)parser.getOption("-current").doubleValue());
             viewer.beamMonitor.start();
         }

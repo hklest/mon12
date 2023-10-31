@@ -2,7 +2,6 @@ package org.clas.viewer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -48,14 +47,14 @@ public class BeamMonitor extends Thread {
                 c.connectAsync().get(2, TimeUnit.SECONDS);
                 beamCurrents.add(c);
             } catch (InterruptedException | ExecutionException | TimeoutException ex) {
-                Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, ex);
-                Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, "Error connection to PV:  " + s);
+                System.err.println(ex);
+                System.err.println("Error connection to PV:  " + s);
             }
         }
         if (beamCurrents.isEmpty()) {
-            Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, "No PVs available.  Assume beam is always good.");
+            System.err.println("No PVs available.  Assume beam is always good.");
         }
-
+        
         // periodically poll the PVs:
         while (!beamCurrents.isEmpty()) {
             float minimum = Float.POSITIVE_INFINITY;
@@ -63,7 +62,7 @@ public class BeamMonitor extends Thread {
                 try {
                     minimum = (float) Math.min(minimum, (double)c.getAsync().get());
                 } catch (InterruptedException | ExecutionException ex) {
-                    Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, ex);
+                    System.err.println(ex);
                 } 
             }
 
@@ -72,7 +71,7 @@ public class BeamMonitor extends Thread {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ex) {
-                Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, ex);
+                System.err.println(ex);
             }
         }
     }

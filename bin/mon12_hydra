@@ -4,9 +4,10 @@ dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 $dir/mon12 \
  -tabs "BAND:BMT:BST:CND:CTOF:DC:ECAL:FMT:FTOF:HTCC:LTCC:RICH:RF:HEL:Trigger:TimeJitter" \
- -trigger 0x4000 \
- -autosave 15000 \
+ -trigger 0x4081 \
+ -autosave 10000 \
  -batch 1 \
+ -current 50 \
  -outDir /local/baltzell/hydra/images \
  $* \
  2>&1 \

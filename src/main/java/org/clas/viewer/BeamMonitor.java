@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.epics.ca.Channel;
 import org.epics.ca.Context;
 
@@ -19,28 +17,35 @@ public class BeamMonitor extends Thread {
     static final String[] PVNAMES = {"IPM2C21A", "IPM2C24A"};
     static final float DEFAULT_BEAM_CURRENT = -1;
 
-    private final List<Channel> beamCurrents = new ArrayList<>();
-    private volatile float beamCurrent = DEFAULT_BEAM_CURRENT;
     private float minBeamCurrent = DEFAULT_BEAM_CURRENT;
+    private final List<Channel> beamCurrents = new ArrayList<>();
+
+    private volatile float beamCurrent = DEFAULT_BEAM_CURRENT;
 
     public BeamMonitor(float minimumBeamCurrent) {
         minBeamCurrent = minimumBeamCurrent;
     }
 
+    /**
+     * @return value of the current beam current in nA
+     */
     public float getBeamCurrent() {
         return beamCurrent;
     }
 
+    /**
+     * @return whether beam currently looks good
+     */
     public boolean getBeamStatus() {
         return beamCurrents.isEmpty() || beamCurrent > minBeamCurrent;
     }
-
-    @Override
-    public void run() {
-
+    
+    /**
+     * Connect to all the PVs.
+     */
+    public void connect() {
+        beamCurrents.clear();
         Context context = new Context();
-
-        // connect to all PVs:
         for (String s : PVNAMES) {
             Channel c = context.createChannel(s, Double.class);
             try {
@@ -54,8 +59,12 @@ public class BeamMonitor extends Thread {
         if (beamCurrents.isEmpty()) {
             System.err.println("No PVs available.  Assume beam is always good.");
         }
-        
-        // periodically poll the PVs:
+    }
+    
+    /**
+     * Poll all PVs and store beam current.
+     */
+    public void poll() {
         while (!beamCurrents.isEmpty()) {
             float minimum = Float.POSITIVE_INFINITY;
             for (Channel c : beamCurrents) {
@@ -65,9 +74,15 @@ public class BeamMonitor extends Thread {
                     System.err.println(ex);
                 } 
             }
-
             beamCurrent = minimum!=Float.POSITIVE_INFINITY ? minimum : DEFAULT_BEAM_CURRENT;
+        }
+    }
 
+    @Override
+    public void run() {
+        connect();
+        while (!beamCurrents.isEmpty()) {
+            poll();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ex) {
@@ -75,4 +90,5 @@ public class BeamMonitor extends Thread {
             }
         }
     }
+
 }

@@ -1,8 +1,5 @@
 package org.clas.viewer;
 
-import org.epics.ca.Channel;
-import org.epics.ca.Context;
-
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Image;
@@ -18,10 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -98,36 +91,10 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
     private long triggerMask;
     private boolean autoSave;
 
-    // detector monitors
     public LinkedHashMap<String, DetectorMonitor> monitors = new LinkedHashMap<>();
-   
-    volatile double beamCurrent = 0;
     
-    Thread monitorBeamCurrent = new Thread() {
-        public void run() {
-            Context context = new Context();
-            Channel channel = context.createChannel("IPM2C21A", Double.class);
-            try {
-                channel.connectAsync().get(2, TimeUnit.SECONDS);
-           } catch (Exception ex) {
-                Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, ex);
-           }
-           while (true) {
-                try {
-                    CompletableFuture<Double> cf = channel.getAsync();
-                    beamCurrent = cf.get();
-                } catch (Exception ex) {
-                    Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, ex);
-                }
-           }
-        }
-    };
-
+    public BeamMonitor beamMonitor = null;
+    
     public final void initMonitors() {
         this.monitors.put("BAND",        new BANDmonitor("BAND"));
         this.monitors.put("BMT",         new BMTmonitor("BMT"));
@@ -154,8 +121,6 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
     }
                     
     public EventViewer(String host, String ip) {
-        monitorBeamCurrent.start();
-
         this.mainPanel = new JPanel();	
         this.mainPanel.setLayout(new BorderLayout());
         this.tabbedpane = new JTabbedPane();
@@ -591,10 +556,11 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         this.timer.resume();
         if (event == null) return;
 
-        if (beamCurrent<70) {
+        // check beam current:
+        if (beamMonitor != null && !beamMonitor.getBeamStatus()) {
             return;
         }
-
+        
         // convert event to HIPO:
     	DataEvent hipo = event;
         if (event instanceof EvioDataEvent) {
@@ -873,10 +839,16 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         parser.addOption("-autosave", "-1",             "Autosave every N events (e.g. for Hydra)");
         parser.addOption("-batch",    "0",              "Connect and run automatically");
         parser.addOption("-outDir",   null,             "Path for output PNG/HIPO files");
+        parser.addOption("-current",  "-1",             "Minimum beam current");
         parser.parse(args);
 
         EventViewer viewer = new EventViewer(parser.getOption("-ethost").stringValue(),
         parser.getOption("-etip").stringValue());
+
+        if (parser.getOption("-current").doubleValue() > 0) {
+            viewer.beamMonitor = new BeamMonitor((float)parser.getOption("-current").doubleValue());
+            viewer.beamMonitor.start();
+        }
 
         // Deal with -autosave option:
         if (parser.getOption("-autosave").intValue() > 0) {

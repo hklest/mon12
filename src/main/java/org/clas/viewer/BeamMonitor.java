@@ -46,7 +46,7 @@ public class BeamMonitor extends Thread {
             Channel c = context.createChannel(s, Double.class);
             try {
                 c.connectAsync().get(2, TimeUnit.SECONDS);
-                beamCurrents.add(context.createChannel(s, Double.class));
+                beamCurrents.add(c);
             } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                 Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, ex);
                 Logger.getLogger(EventViewer.class.getName()).log(Level.SEVERE, null, "Error connection to PV:  " + s);

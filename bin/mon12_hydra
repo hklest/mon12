@@ -2,16 +2,25 @@
 
 dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
+# RG-D operates at two beam currents, depending on the target:
+min_current=40
+target=$(caget -t -w 1 HLB:TARGET:STAT)
+if [ $? -eq 0 ]
+then
+    if [ "$target" == "CuSn" ]
+    then
+        min_current=90
+    fi
+fi
+
 $dir/mon12 \
  -tabs "BAND:BMT:BST:CND:CTOF:DC:ECAL:FMT:FTOF:HTCC:LTCC:RICH:RF:HEL:Trigger:TimeJitter" \
  -trigger 0x4081 \
- -autosave 10000 \
  -batch 1 \
- -current 50 \
+ -autosave 10000 \
+ -current $min_current \
  -outDir /local/baltzell/hydra/images \
  $* \
  2>&1 \
 | grep -v -E -f $dir/.logignore
-
-#-trigger 0x1 \
 

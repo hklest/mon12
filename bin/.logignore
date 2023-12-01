@@ -6,4 +6,6 @@
 ^negative or zero diagonal
 ^added
 ^eigenvalue
-^[-]*[0-9]+\.[0-9]+[e]*[0-9]*$
+^[\-]*[0-9]+\.[0-9]+[e]*[\-]*[0-9]*$
+network communication error
+waiting for events

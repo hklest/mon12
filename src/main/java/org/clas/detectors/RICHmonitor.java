@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.jlab.groot.graphics.EmbeddedPad;
 import org.jlab.groot.graphics.IDataSetPlotter;
+import org.jlab.groot.math.F1D;
 
 
 
@@ -90,6 +91,11 @@ public class RICHmonitor  extends DetectorMonitor {
             hi_pmt_leading_edge_1D.setTitleY("Counts");
             hi_pmt_leading_edge_1D.setOptStat("100010");
             hi_pmt_leading_edge_1D.setFillColor(24);
+            F1D f1_pmt_leading_edge = new F1D("f1_pmt_leading_edge_" + SECTOR[i],"[amp]*gaus(x,[mean],[sigma])", LE-0.03, LE+0.03);
+            f1_pmt_leading_edge.setParameter(0, 0);
+            f1_pmt_leading_edge.setParameter(1, LE);
+            f1_pmt_leading_edge.setParameter(2, 0.01);
+            f1_pmt_leading_edge.setLineWidth(2);
             H1F hi_pmt_trailing_edge_1D = new H1F("hi_pmt_trailing_edge_1D_" + SECTOR[i], "Sector " + SECTOR[i], 100, 0, 300);
             hi_pmt_trailing_edge_1D.setTitleX("Leading and Trailing Edge Time (ns)");
             hi_pmt_trailing_edge_1D.setTitleY("Counts");
@@ -99,6 +105,16 @@ public class RICHmonitor  extends DetectorMonitor {
             hi_pmt_duration_1D.setTitleY("Counts"); 
             hi_pmt_duration_1D.setOptStat("100010");
             hi_pmt_duration_1D.setFillColor(25);
+            F1D f1_pmt_duration_XT = new F1D("f1_pmt_duration_XT_" + SECTOR[i],"[amp]*gaus(x,[mean],[sigma])", XT-0.03, XT+0.03);
+            f1_pmt_duration_XT.setParameter(0, 0);
+            f1_pmt_duration_XT.setParameter(1, XT);
+            f1_pmt_duration_XT.setParameter(2, 0.01);
+            f1_pmt_duration_XT.setLineWidth(2);
+            F1D f1_pmt_duration_TOT = new F1D("f1_pmt_duration_TOT_" + SECTOR[i],"[amp]*gaus(x,[mean],[sigma])", TOT-0.03, TOT+0.03);
+            f1_pmt_duration_TOT.setParameter(0, 0);
+            f1_pmt_duration_TOT.setParameter(1, TOT);
+            f1_pmt_duration_TOT.setParameter(2, 0.01);
+            f1_pmt_duration_TOT.setLineWidth(2);
             H1F hi_pmt_occupancy    = new H1F("hi_pmt_occupancy_" + SECTOR[i], "PMT",   "Counts", NPMT, +0.5, NPMT+0.5);
             hi_pmt_occupancy.setTitle("PMT Hit Occupancy");
             hi_pmt_occupancy.setFillColor(25);
@@ -119,7 +135,10 @@ public class RICHmonitor  extends DetectorMonitor {
             dg.addDataSet(hi_pmt_duration_2D,      1);
             dg.addDataSet(hi_pmt_leading_edge_1D,  2);
             dg.addDataSet(hi_pmt_trailing_edge_1D, 2);
+            dg.addDataSet(f1_pmt_leading_edge,     2);
             dg.addDataSet(hi_pmt_duration_1D,      3);
+            dg.addDataSet(f1_pmt_duration_XT,      3);
+            dg.addDataSet(f1_pmt_duration_TOT,     3);
             dg.addDataSet(hi_pmt_occupancy,        4);
             dg.addDataSet(hi_pmt_max,              4);
             dg.addDataSet(hi_pix_occupancy,        5);
@@ -172,8 +191,11 @@ public class RICHmonitor  extends DetectorMonitor {
             this.getDetectorCanvas().getCanvas("time").cd(0 + i);
             this.getDetectorCanvas().getCanvas("time").draw(this.getDataGroup().getItem(i+1,0,0).getH1F("hi_pmt_trailing_edge_1D_" + SECTOR[i]));
             this.getDetectorCanvas().getCanvas("time").draw(this.getDataGroup().getItem(i+1,0,0).getH1F("hi_pmt_leading_edge_1D_" + SECTOR[i]), "same");
+            this.getDetectorCanvas().getCanvas("time").draw(this.getDataGroup().getItem(i+1,0,0).getF1D("f1_pmt_leading_edge_" + SECTOR[i]), "same");
             this.getDetectorCanvas().getCanvas("time").cd(2 + i);
             this.getDetectorCanvas().getCanvas("time").draw(this.getDataGroup().getItem(i+1,0,0).getH1F("hi_pmt_duration_1D_" + SECTOR[i]));
+            this.getDetectorCanvas().getCanvas("time").draw(this.getDataGroup().getItem(i+1,0,0).getF1D("f1_pmt_duration_XT_" + SECTOR[i]),"same");
+            this.getDetectorCanvas().getCanvas("time").draw(this.getDataGroup().getItem(i+1,0,0).getF1D("f1_pmt_duration_TOT_" + SECTOR[i]),"same");
             this.getDetectorCanvas().getCanvas("time").update();
             this.getDetectorCanvas().getCanvas("occupancy2d").cd(i);
             this.getDetectorCanvas().getCanvas("occupancy2d").getPad(i).setPalette("kRainBow");
@@ -268,20 +290,19 @@ public class RICHmonitor  extends DetectorMonitor {
             this.setYAxisMin(this.getDetectorCanvas().getCanvas("s" + SECTOR[im]).getPad(1),average*MINPIXEL);
             this.getDetectorCanvas().getCanvas("s" + SECTOR[im]).getPad(2).getAxisZ().setRange(0, average*MAXTIME);
             this.getDetectorCanvas().getCanvas("s" + SECTOR[im]).getPad(3).getAxisZ().setRange(0, average*MAXTIME);
-            this.drawLine(this.getDetectorCanvas().getCanvas("time").getPad(im), LE);
-            this.drawLine(this.getDetectorCanvas().getCanvas("time").getPad(im+2), XT);
-            this.drawLine(this.getDetectorCanvas().getCanvas("time").getPad(im+2), TOT);
+            this.getDataGroup().getItem(im+1,0,0).getF1D("f1_pmt_leading_edge_" + SECTOR[im]).setParameter(0, 1.2*this.getDataGroup().getItem(im+1,0,0).getH1F("hi_pmt_leading_edge_1D_" + SECTOR[im]).getMax());
+            this.getDataGroup().getItem(im+1,0,0).getF1D("f1_pmt_duration_XT_" + SECTOR[im]).setParameter(0, 1.2*this.getDataGroup().getItem(im+1,0,0).getH1F("hi_pmt_duration_1D_" + SECTOR[im]).getMax());
+            this.getDataGroup().getItem(im+1,0,0).getF1D("f1_pmt_duration_TOT_" + SECTOR[im]).setParameter(0, 1.2*this.getDataGroup().getItem(im+1,0,0).getH1F("hi_pmt_duration_1D_" + SECTOR[im]).getMax());
+//            this.getDetectorCanvas().getCanvas("time").getPad(im).draw(this.getLine(this.getDataGroup().getItem(im+1,0,0).getH1F("hi_pmt_leading_edge_1D_" + SECTOR[im]), LE));
+//            this.getDetectorCanvas().getCanvas("time").getPad(im+2).draw(this.getLine(this.getDataGroup().getItem(im+1,0,0).getH1F("hi_pmt_duration_1D_" + SECTOR[im]), XT));
+//            this.getDetectorCanvas().getCanvas("time").getPad(im+2).draw(this.getLine(this.getDataGroup().getItem(im+1,0,0).getH1F("hi_pmt_duration_1D_" + SECTOR[im]), TOT));
             this.getDetectorCanvas().getCanvas("occupancy2d").getPad(im).getAxisZ().setRange(0, average*MAXMAP);
         }
     }
     
-    private void drawLine(EmbeddedPad pad, double x) {
-        double max = 0;
-        for(IDataSetPlotter hh : pad.getDatasetPlotters()) {
-            max = Math.max(max, 1.2*hh.getDataSet().getMax());
-        }
-        DataLine line = new DataLine(x, 0, x, max);
-        pad.draw(line);
+    private DataLine getLine(H1F histo, double x) {
+        double max = 1.2*histo.getMax();
+        return new DataLine(x, 0, x, max);
     }
     
     private void setYAxisMin(EmbeddedPad pad, double min) {

@@ -115,10 +115,10 @@ public class RICHmonitor  extends DetectorMonitor {
             f1_pmt_duration_TOT.setParameter(1, TOT);
             f1_pmt_duration_TOT.setParameter(2, 0.01);
             f1_pmt_duration_TOT.setLineWidth(2);
-            H1F hi_pmt_multiplicity = new H1F("hi_pmt_multiplicity_" + SECTOR[i], "Sector " + SECTOR[i], 100, 0,  500);
-            hi_pmt_multiplicity.setTitleX("Multiplicity");
+            H1F hi_pmt_multiplicity = new H1F("hi_pmt_multiplicity_" + SECTOR[i], "Sector " + SECTOR[i], 100, 0,  300);
+            hi_pmt_multiplicity.setTitleX("TDC Multiplicity");
             hi_pmt_multiplicity.setTitleY("Counts"); 
-            hi_pmt_multiplicity.setOptStat("100010");
+            hi_pmt_multiplicity.setOptStat("100110");
             hi_pmt_multiplicity.setFillColor(24);
             H1F hi_pmt_occupancy    = new H1F("hi_pmt_occupancy_" + SECTOR[i], "PMT",   "Counts", NPMT, +0.5, NPMT+0.5);
             hi_pmt_occupancy.setTitle("PMT Hit Occupancy");

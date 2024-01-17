@@ -26,7 +26,7 @@ public class FTOFmonitor  extends DetectorMonitor {
     public FTOFmonitor(String name) {
         super(name);
         
-        this.setDetectorTabNames("adcOccupancy", "tdcOccupancy","adcEnergy_s", "adcTime_s", "tdc_s","misc_s");
+        this.setDetectorTabNames("adcOccupancy", "tdcOccupancy","adcEnergy_s", "adcTime_s", "tdc_s");
         this.useSectorButtons(true);
         this.init(false);   // set to true for picture on left side
         ftofHits[0] = new FTOFHits("PANEL1A");
@@ -55,9 +55,9 @@ public class FTOFmonitor  extends DetectorMonitor {
         this.getDetectorCanvas().getCanvas("tdc").divide(2, 3);
         this.getDetectorCanvas().getCanvas("tdc").setGridX(false);
         this.getDetectorCanvas().getCanvas("tdc").setGridY(false);
-        this.getDetectorCanvas().getCanvas("misc").divide(2, 3);
-        this.getDetectorCanvas().getCanvas("misc").setGridX(false);
-        this.getDetectorCanvas().getCanvas("misc").setGridY(false);
+//        this.getDetectorCanvas().getCanvas("misc").divide(2, 3);
+//        this.getDetectorCanvas().getCanvas("misc").setGridX(false);
+//        this.getDetectorCanvas().getCanvas("misc").setGridY(false);
         
         String[] stacks = new String[]{"P1A","P1B","P2"};
         String[] views = new String[]{"Left","Right"};   
@@ -121,16 +121,16 @@ public class FTOFmonitor  extends DetectorMonitor {
             dg.addDataSet(timeFADC, 1);
             dg.addDataSet(datTDC, 2);
         }
-            H2F misc = new H2F("GMean"+sec+lay, "sec/lay"+sec+lay+" GMean", 100, 0., 6000.,this.npaddles[lay], 1, npaddles[lay]+1 );
-            misc.setTitleY(stacks[lay] +" PMTS");
-            misc.setTitleX("GMean");
-            misc.setTitle("Sector "+sec);
-            dg.addDataSet(misc, 3);
-            H2F TDIF = new H2F("TDIF"+sec+lay, "sec/lay"+sec+lay+" TDIF", 100, -40., 40.,this.npaddles[lay], 1, npaddles[lay]+1 );
-            TDIF.setTitleY(stacks[lay] +" PMTS");
-            TDIF.setTitleX("TLeft-TRight");
-            TDIF.setTitle("Sector "+sec);
-            dg.addDataSet(TDIF, 4);
+//            H2F misc = new H2F("GMean"+sec+lay, "sec/lay"+sec+lay+" GMean", 100, 0., 6000.,this.npaddles[lay], 1, npaddles[lay]+1 );
+//            misc.setTitleY(stacks[lay] +" PMTS");
+//            misc.setTitleX("GMean");
+//            misc.setTitle("Sector "+sec);
+//            dg.addDataSet(misc, 3);
+//            H2F TDIF = new H2F("TDIF"+sec+lay, "sec/lay"+sec+lay+" TDIF", 100, -40., 40.,this.npaddles[lay], 1, npaddles[lay]+1 );
+//            TDIF.setTitleY(stacks[lay] +" PMTS");
+//            TDIF.setTitleX("TLeft-TRight");
+//            TDIF.setTitle("Sector "+sec);
+//            dg.addDataSet(TDIF, 4);
             this.getDataGroup().add(dg,sec,lay,0);
         }
         }
@@ -194,12 +194,12 @@ public class FTOFmonitor  extends DetectorMonitor {
                         this.getDetectorCanvas().getCanvas("tdc").getPad(lay * 2 + ord).getAxisZ().setLog(getLogZ());
                         this.getDetectorCanvas().getCanvas("tdc").draw(this.getDataGroup().getItem(sec, lay, 0).getH2F("datTDC" + sec + lay + ord));
                     }
-                    this.getDetectorCanvas().getCanvas("misc").cd(lay * 2 + 0);
-                    this.getDetectorCanvas().getCanvas("misc").getPad(lay * 2 + 0).getAxisZ().setLog(getLogZ());
-                    this.getDetectorCanvas().getCanvas("misc").draw(this.getDataGroup().getItem(sec, lay, 0).getH2F("GMean" + sec + lay));
-                    this.getDetectorCanvas().getCanvas("misc").cd(lay * 2 + 1);
-                    this.getDetectorCanvas().getCanvas("misc").getPad(lay * 2 + 1).getAxisZ().setLog(getLogZ());
-                    this.getDetectorCanvas().getCanvas("misc").draw(this.getDataGroup().getItem(sec, lay, 0).getH2F("TDIF" + sec + lay));
+//                    this.getDetectorCanvas().getCanvas("misc").cd(lay * 2 + 0);
+//                    this.getDetectorCanvas().getCanvas("misc").getPad(lay * 2 + 0).getAxisZ().setLog(getLogZ());
+//                    this.getDetectorCanvas().getCanvas("misc").draw(this.getDataGroup().getItem(sec, lay, 0).getH2F("GMean" + sec + lay));
+//                    this.getDetectorCanvas().getCanvas("misc").cd(lay * 2 + 1);
+//                    this.getDetectorCanvas().getCanvas("misc").getPad(lay * 2 + 1).getAxisZ().setLog(getLogZ());
+//                    this.getDetectorCanvas().getCanvas("misc").draw(this.getDataGroup().getItem(sec, lay, 0).getH2F("TDIF" + sec + lay));
                 }
             }
         }
@@ -208,7 +208,7 @@ public class FTOFmonitor  extends DetectorMonitor {
         this.getDetectorCanvas().getCanvas("tdcOccupancy").update();
         this.getDetectorCanvas().getCanvas("adcEnergy").update();
         this.getDetectorCanvas().getCanvas("tdc").update();
-        this.getDetectorCanvas().getCanvas("misc").update();
+//        this.getDetectorCanvas().getCanvas("misc").update();
     }           
 
     @Override
@@ -287,8 +287,8 @@ public class FTOFmonitor  extends DetectorMonitor {
             }
         }
 
-        getGMM(); 
-        getTDD();
+//        getGMM(); 
+//        getTDD();
 
         /*
         for(int sec=1; sec<7; sec++) {

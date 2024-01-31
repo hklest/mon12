@@ -90,12 +90,12 @@ public class HELmonitor extends DetectorMonitor {
         DataGroup dg2 = new DataGroup(2,2);
         H1F template = new H1F("h","",3,-1.5,1.5);
         template.setTitleY("Counts");
-        template.setFillColor(3);
         String[] signals = {"HelicityCorr","Helicity","Pair","Pattern"};
         int i=0;
         for (String s : signals) {
             H1F h = template.histClone(String.format("helbrd%s",s));
             h.setTitleX(s);
+            h.setFillColor(3);
             dg2.addDataSet(h, i++);
         }
         this.getDataGroup().add(dg2, 1,0,0);
@@ -140,9 +140,9 @@ public class HELmonitor extends DetectorMonitor {
             DataBank b = event.getBank("HEL::decoder");
             int rows = b.rows();
             for (int i=0; i<rows; ++i) {
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill((float)(b.getInt("helicityPArray",i)&1));
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair").fill((float)(b.getInt("pairPArray",i)&1));
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern").fill((float)(b.getInt("patternPArray",i)&1));
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill(-1+2*(float)(b.getInt("helicityArray",i)&1));
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair").fill(-1+2*(float)(b.getInt("pairArray",i)&1));
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern").fill(-1+2*(float)(b.getInt("patternArray",i)&1));
             }
         }
         if (event.hasBank("RUN::trigger") && event.hasBank("RUN::config") && event.hasBank("HEL::adc")) {

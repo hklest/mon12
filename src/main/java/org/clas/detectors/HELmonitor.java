@@ -16,6 +16,9 @@ import org.jlab.io.base.DataEvent;
 
 public class HELmonitor extends DetectorMonitor {
 
+    static final byte patternLength = 4;
+    static final byte delayWindows = 8;
+    
     public HELmonitor(String name) {
         super(name);
         this.setDetectorTabNames("signals","board");
@@ -141,9 +144,13 @@ public class HELmonitor extends DetectorMonitor {
             DataBank b = event.getBank("HEL::decoder");
             int rows = b.rows();
             for (int i=0; i<rows; ++i) {
-                int h = DecoderBoardUtil.getWindowHelicity(
+
+                boolean x = DecoderBoardUtil.checkPairs(b.getInt("pairArray",i));
+                boolean y = DecoderBoardUtil.checkPatterns(b.getInt("patternArray",i), patternLength);
+                boolean z = DecoderBoardUtil.checkHelicities(b.getInt("patternArray",i), b.getInt("helicityArray",i), patternLength);
+                int h = x&&y&&z ? DecoderBoardUtil.getWindowHelicity(
                     DecoderBoardUtil.getPatternHelicity(b.getInt("helicityPArray", i),
-                    8/4), 8%4);
+                    delayWindows/patternLength), delayWindows%patternLength) : 0;
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityCorr").fill(-1+2*(float)(h));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill(-1+2*(float)(b.getInt("helicityArray",i)&1));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair").fill(-1+2*(float)(b.getInt("pairArray",i)&1));

@@ -1,6 +1,7 @@
 package org.clas.detectors;
 
 import org.clas.viewer.DetectorMonitor;
+import org.jlab.detector.helicity.DecoderBoardUtil;
 import org.jlab.groot.data.GraphErrors;
 import org.jlab.groot.data.H1F;
 import org.jlab.groot.group.DataGroup;
@@ -140,6 +141,10 @@ public class HELmonitor extends DetectorMonitor {
             DataBank b = event.getBank("HEL::decoder");
             int rows = b.rows();
             for (int i=0; i<rows; ++i) {
+                int h = DecoderBoardUtil.getWindowHelicity(
+                    DecoderBoardUtil.getPatternHelicity(b.getInt("helicityPArray", i),
+                    8/4), 8%4);
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityCorr").fill(-1+2*(float)(h));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill(-1+2*(float)(b.getInt("helicityArray",i)&1));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair").fill(-1+2*(float)(b.getInt("pairArray",i)&1));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern").fill(-1+2*(float)(b.getInt("patternArray",i)&1));

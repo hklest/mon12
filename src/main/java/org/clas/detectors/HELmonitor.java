@@ -148,10 +148,10 @@ public class HELmonitor extends DetectorMonitor {
                 boolean x = DecoderBoardUtil.checkPairs(b.getInt("pairArray",i));
                 boolean y = DecoderBoardUtil.checkPatterns(b.getInt("patternArray",i), patternLength);
                 boolean z = DecoderBoardUtil.checkHelicities(b.getInt("patternArray",i), b.getInt("helicityArray",i), patternLength);
-                int h = x&&y&&z ? DecoderBoardUtil.getWindowHelicity(
+                int h = x&&y&&z ? -1+2*DecoderBoardUtil.getWindowHelicity(
                     DecoderBoardUtil.getPatternHelicity(b.getInt("helicityPArray", i),
                     delayWindows/patternLength), delayWindows%patternLength) : 0;
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityCorr").fill(-1+2*(float)(h));
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityCorr").fill(h);
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill(-1+2*(float)(b.getInt("helicityArray",i)&1));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair").fill(-1+2*(float)(b.getInt("pairArray",i)&1));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern").fill(-1+2*(float)(b.getInt("patternArray",i)&1));

@@ -4,6 +4,7 @@ import org.clas.viewer.DetectorMonitor;
 import org.jlab.detector.helicity.DecoderBoardUtil;
 import org.jlab.groot.data.GraphErrors;
 import org.jlab.groot.data.H1F;
+import org.jlab.groot.data.H2F;
 import org.jlab.groot.group.DataGroup;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
@@ -13,12 +14,11 @@ import org.jlab.io.base.DataEvent;
  * @author devita
  */
 
-
 public class HELmonitor extends DetectorMonitor {
 
-    static final byte patternLength = 4;
-    static final byte delayWindows = 8;
-    
+    static final DecoderBoardUtil decoderBoardUtil = DecoderBoardUtil.QUARTET;
+    static final byte DELAY_WINDOWS = 8;
+
     public HELmonitor(String name) {
         super(name);
         this.setDetectorTabNames("signals","board");
@@ -91,17 +91,25 @@ public class HELmonitor extends DetectorMonitor {
 
         this.getDataGroup().add(dg, 0,0,0);
         
-        DataGroup dg2 = new DataGroup(2,2);
+        DataGroup dg2 = new DataGroup(3,2);
         H1F template = new H1F("h","",3,-1.5,1.5);
         template.setTitleY("Counts");
-        String[] signals = {"HelicityCorr","Helicity","Pair","Pattern"};
+        String[] signals = {"Helicity","HelicityRaw","Pair","Pattern","L3"};
         int i=0;
         for (String s : signals) {
             H1F h = template.histClone(String.format("helbrd%s",s));
+            if (i<2) h.setFillColor(22);
+            else if (i==2) h.setFillColor(33);
+            else if (i==3) h.setFillColor(44);
+            else if (i==4) h.setFillColor(22);
             h.setTitleX(s);
-            h.setFillColor(3);
-            dg2.addDataSet(h, i++);
+            dg2.addDataSet(h, i==2?++i:i++);
         }
+
+        H2F helcmp = new H2F("helcmp","",3,-1.5,1.5,3,-1.5,1.5);
+        helcmp.setTitleX("L3");
+        helcmp.setTitleY("Helicity");
+        dg2.addDataSet(helcmp, 2);
         this.getDataGroup().add(dg2, 1,0,0);
     }
        
@@ -127,36 +135,58 @@ public class HELmonitor extends DetectorMonitor {
         this.getDetectorCanvas().getCanvas("signals").draw(this.getDataGroup().getItem(0,0,0).getH1F("quartet"));
         this.getDetectorCanvas().getCanvas("signals").update();
 
-        this.getDetectorCanvas().getCanvas("board").divide(2,2);
+        this.getDetectorCanvas().getCanvas("board").divide(3,2);
         this.getDetectorCanvas().getCanvas("board").cd(0);
-        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityCorr"));
-        this.getDetectorCanvas().getCanvas("board").cd(1);
         this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity"));
-        this.getDetectorCanvas().getCanvas("board").cd(2);
-        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair"));
         this.getDetectorCanvas().getCanvas("board").cd(3);
+        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityRaw"));
+        this.getDetectorCanvas().getCanvas("board").cd(4);
+        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair"));
+        this.getDetectorCanvas().getCanvas("board").cd(5);
         this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern"));
+        this.getDetectorCanvas().getCanvas("board").cd(1);
+        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdL3"));
+
+        this.getDetectorCanvas().getCanvas("board").cd(2);
+        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH2F("helcmp"));
+        this.getDetectorCanvas().getCanvas("board").getCanvasPads().get(2).setPalette("kAvocado");
+        this.getDetectorCanvas().getCanvas("board").getCanvasPads().get(2).getAxisZ().setLog(true);
     }
 
-    @Override
-    public void processEvent(DataEvent event) {
-        if (event.hasBank("HEL::decoder")) {
-            DataBank b = event.getBank("HEL::decoder");
-            int rows = b.rows();
-            for (int i=0; i<rows; ++i) {
-
-                boolean x = DecoderBoardUtil.checkPairs(b.getInt("pairArray",i));
-                boolean y = DecoderBoardUtil.checkPatterns(b.getInt("patternArray",i), patternLength);
-                boolean z = DecoderBoardUtil.checkHelicities(b.getInt("patternArray",i), b.getInt("helicityArray",i), patternLength);
-                int h = x&&y&&z ? -1+2*DecoderBoardUtil.getWindowHelicity(
-                    DecoderBoardUtil.getPatternHelicity(b.getInt("helicityPArray", i),
-                    delayWindows/patternLength), delayWindows%patternLength) : 0;
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityCorr").fill(h);
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill(-1+2*(float)(b.getInt("helicityArray",i)&1));
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair").fill(-1+2*(float)(b.getInt("pairArray",i)&1));
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern").fill(-1+2*(float)(b.getInt("patternArray",i)&1));
+    public void processEventBoard(DataEvent event) {
+        final int row = 0;
+        if (event.hasBank("HEL::online")) {
+            DataBank b = event.getBank("HEL::online");
+            if (b.rows() > 0) {
+                int honline = -b.getByte("helicity", row);
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdL3").fill(honline);
             }
         }
+        if (event.hasBank("HEL::decoder")) {
+            DataBank bboard = event.getBank("HEL::decoder");
+            if (bboard.rows() > 0) {
+                int hboard = !decoderBoardUtil.check(bboard) ? 0 :
+                    -1+2*decoderBoardUtil.getWindowHelicity(bboard, DELAY_WINDOWS);
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill(hboard);
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityRaw").fill(-1+2*(float)(bboard.getInt("helicityArray",row)&1));
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair").fill(-1+2*(float)(bboard.getInt("pairArray",row)&1));
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern").fill(-1+2*(float)(bboard.getInt("patternArray",row)&1));
+                if (event.hasBank("HEL::online")) {
+                    DataBank bonline = event.getBank("HEL::online");
+                    if (bonline.rows() > 0) {
+                        int honline = -bonline.getByte("helicity", row);
+                        this.getDataGroup().getItem(1,0,0).getH2F("helcmp").fill(honline,hboard);
+                    }
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void processEvent(DataEvent event) {
+
+        processEventBoard(event);
+
         if (event.hasBank("RUN::trigger") && event.hasBank("RUN::config") && event.hasBank("HEL::adc")) {
             DataBank bank = event.getBank("HEL::adc");
             int rows = bank.rows();

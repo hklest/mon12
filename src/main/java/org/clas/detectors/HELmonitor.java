@@ -14,13 +14,11 @@ import org.jlab.io.base.DataEvent;
  * @author devita
  */
 
-
 public class HELmonitor extends DetectorMonitor {
 
     static final DecoderBoardUtil decoderBoardUtil = DecoderBoardUtil.QUARTET;
-    static final byte patternLength = 4;
-    static final byte delayWindows = 8;
-    
+    static final byte DELAY_WINDOWS = 8;
+
     public HELmonitor(String name) {
         super(name);
         this.setDetectorTabNames("signals","board");
@@ -96,21 +94,23 @@ public class HELmonitor extends DetectorMonitor {
         DataGroup dg2 = new DataGroup(3,2);
         H1F template = new H1F("h","",3,-1.5,1.5);
         template.setTitleY("Counts");
-        String[] signals = {"HelicityCorr","Helicity","Pair","Pattern","OnlineCorr"};
+        String[] signals = {"Helicity","HelicityRaw","Pair","Pattern","L3"};
         int i=0;
         for (String s : signals) {
             H1F h = template.histClone(String.format("helbrd%s",s));
+            if (i<2) h.setFillColor(22);
+            else if (i==2) h.setFillColor(33);
+            else if (i==3) h.setFillColor(44);
+            else if (i==4) h.setFillColor(22);
             h.setTitleX(s);
-            h.setFillColor(3);
             dg2.addDataSet(h, i==2?++i:i++);
         }
 
         H2F helcmp = new H2F("helcmp","",3,-1.5,1.5,3,-1.5,1.5);
-        helcmp.setTitleX("Online");
-        helcmp.setTitleY("Board");
+        helcmp.setTitleX("L3");
+        helcmp.setTitleY("Helicity");
         dg2.addDataSet(helcmp, 2);
         this.getDataGroup().add(dg2, 1,0,0);
-
     }
        
     @Override
@@ -137,18 +137,18 @@ public class HELmonitor extends DetectorMonitor {
 
         this.getDetectorCanvas().getCanvas("board").divide(3,2);
         this.getDetectorCanvas().getCanvas("board").cd(0);
-        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityCorr"));
-        this.getDetectorCanvas().getCanvas("board").cd(1);
         this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity"));
         this.getDetectorCanvas().getCanvas("board").cd(3);
-        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair"));
+        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityRaw"));
         this.getDetectorCanvas().getCanvas("board").cd(4);
+        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair"));
+        this.getDetectorCanvas().getCanvas("board").cd(5);
         this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern"));
+        this.getDetectorCanvas().getCanvas("board").cd(1);
+        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdL3"));
+
         this.getDetectorCanvas().getCanvas("board").cd(2);
         this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH2F("helcmp"));
-        this.getDetectorCanvas().getCanvas("board").cd(5);
-        this.getDetectorCanvas().getCanvas("board").draw(this.getDataGroup().getItem(1,0,0).getH1F("helbrdOnlineCorr"));
-
         this.getDetectorCanvas().getCanvas("board").getCanvasPads().get(2).setPalette("kAvocado");
         this.getDetectorCanvas().getCanvas("board").getCanvasPads().get(2).getAxisZ().setLog(true);
     }
@@ -158,24 +158,24 @@ public class HELmonitor extends DetectorMonitor {
         if (event.hasBank("HEL::online")) {
             DataBank b = event.getBank("HEL::online");
             if (b.rows() > 0) {
-                int h = -b.getByte("helicity", row);
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdOnlineCorr").fill(h);
+                int honline = -b.getByte("helicity", row);
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdL3").fill(honline);
             }
         }
         if (event.hasBank("HEL::decoder")) {
             DataBank bboard = event.getBank("HEL::decoder");
             if (bboard.rows() > 0) {
                 int hboard = !decoderBoardUtil.check(bboard) ? 0 :
-                    -1+2*decoderBoardUtil.getWindowHelicity(bboard, delayWindows);
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityCorr").fill(hboard);
-                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill(-1+2*(float)(bboard.getInt("helicityArray",row)&1));
+                    -1+2*decoderBoardUtil.getWindowHelicity(bboard, DELAY_WINDOWS);
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicity").fill(hboard);
+                this.getDataGroup().getItem(1,0,0).getH1F("helbrdHelicityRaw").fill(-1+2*(float)(bboard.getInt("helicityArray",row)&1));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdPair").fill(-1+2*(float)(bboard.getInt("pairArray",row)&1));
                 this.getDataGroup().getItem(1,0,0).getH1F("helbrdPattern").fill(-1+2*(float)(bboard.getInt("patternArray",row)&1));
                 if (event.hasBank("HEL::online")) {
                     DataBank bonline = event.getBank("HEL::online");
                     if (bonline.rows() > 0) {
                         int honline = -bonline.getByte("helicity", row);
-                        this.getDataGroup().getItem(1,0,0).getH2F("helcmp").fill(hboard,honline);
+                        this.getDataGroup().getItem(1,0,0).getH2F("helcmp").fill(honline,hboard);
                     }
                 }
             }

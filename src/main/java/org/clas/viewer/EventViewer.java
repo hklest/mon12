@@ -15,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -140,6 +142,11 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         this.initSummary();
         this.initTabs();
         this.initMenus();
+        this.initLoggers();
+    }
+    
+    public void initLoggers() {
+        Logger.getLogger("org.freehep.math.minuit").setLevel(Level.WARNING);
     }
     
     public void initMenus() {   
@@ -292,7 +299,7 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         splitPanel.setLeftComponent(CLAS12View);
         splitPanel.setRightComponent(this.CLAS12Canvas);
         JTextPane clas12Text   = new JTextPane();
-        clas12Text.setText("CLAS12\n monitoring plots\n V7.6\n");
+        clas12Text.setText("CLAS12\n monitoring plots\n V7.8\n");
         clas12Text.setEditable(false);       
         this.clas12Textinfo.setEditable(false);
         this.clas12Textinfo.setFont(new Font("Avenir",Font.PLAIN,16));

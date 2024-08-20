@@ -96,7 +96,7 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
     public LinkedHashMap<String, DetectorMonitor> monitors = new LinkedHashMap<>();
     
     public BeamMonitor beamMonitor = null;
-    
+
     public final void initMonitors() {
         this.monitors.put("BAND",        new BANDmonitor("BAND"));
         this.monitors.put("BMT",         new BMTmonitor("BMT"));
@@ -922,7 +922,10 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         frame.setSize(xSize, ySize);
         frame.setVisible(true);
         
-        if (parser.getOption("-batch").intValue() != 0) {
+        if (!parser.getInputList().isEmpty()) {
+            viewer.processorPane.openAndRun(parser.getInputList().get(0));
+        }
+        else if (parser.getOption("-batch").intValue() != 0) {
             String h = parser.getOption("-ethost").stringValue();
             String i = parser.getOption("-etip").stringValue();
             viewer.processorPane.connectAndRun(i,"11111","/et/clasprod");

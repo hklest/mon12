@@ -47,6 +47,7 @@ public class DetectorMonitor implements IDataEventListener, ActionListener {
     private boolean detectorLogZ = true;
     private boolean detectorLogY = false;
     private boolean active = true;
+    private String variation = "default";
     private final JRadioButton[] bS = new JRadioButton[6];
 
     public IndexedList<List<Float>> ttdcs = new IndexedList<>(4);
@@ -368,6 +369,10 @@ public class DetectorMonitor implements IDataEventListener, ActionListener {
             String name = this.getCanvasTabName(this.detectorTabNames.get(tab));
             this.detectorCanvas.getCanvas(name).initTimer(time);
         }
+    }
+
+    public void setVariation(String variation) {
+        this.variation = variation;
     }
 
     public void setActive(boolean active) {

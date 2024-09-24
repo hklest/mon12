@@ -20,7 +20,6 @@ public class DCmonitor extends DetectorMonitor {
         this.setDetectorTabNames("occupancy", "occupancyNorm", "occupancyPercent", "multiplicity", "tdc2d", "tdc1d_s");
         this.useSectorButtons(true);
         this.init(false);
-        this.getCcdb().setVariation("default");
     }
 
     

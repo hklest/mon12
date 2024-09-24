@@ -24,7 +24,6 @@ public class HTCCmonitor  extends DetectorMonitor {
         
         this.setDetectorTabNames("occupancy", "adcEnergy", "adcTime", "deltaRF");
         this.init(false);
-        this.getCcdb().setVariation("default");
         this.getCcdb().init(Arrays.asList(new String[]{"/calibration/eb/rf/config","/calibration/eb/rf/jitter"}));
     }
 

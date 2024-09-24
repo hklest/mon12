@@ -882,12 +882,10 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
             if(tabs.split(":").length>0) {
                 for(String tab : viewer.monitors.keySet()) {
                     viewer.monitors.get(tab).setActive(false);
-                    viewer.monitors.get(tab).setVariation(parser.getOption("-variation").stringValue());
                 }
                 for(String tab: tabs.split(":")) {
                     if(viewer.monitors.containsKey(tab.trim())) {
                         viewer.monitors.get(tab.trim()).setActive(true);
-                        viewer.monitors.get(tab.trim()).setVariation(parser.getOption("-variation").stringValue());
                     }
                 }
             }

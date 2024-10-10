@@ -896,6 +896,7 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
         for (DetectorMonitor x : viewer.monitors.values()) {
             x.setVariation(parser.getOption("-variation").stringValue());
         }
+        viewer.clasDecoder.setVariation(parser.getOption("-variation").stringValue());
 
         // Deal with -trigger option:
         String trigger = parser.getOption("-trigger").stringValue();

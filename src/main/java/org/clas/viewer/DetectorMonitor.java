@@ -212,6 +212,10 @@ public class DetectorMonitor implements IDataEventListener, ActionListener {
         return active;
     }
 
+    public void setVariation(String variation) {
+        this.ccdb.setVariation(variation);
+    }
+
     public ConstantsManager getCcdb() {
         return ccdb;
     }

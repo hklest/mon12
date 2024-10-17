@@ -30,7 +30,6 @@ public class TJITTERmonitor  extends DetectorMonitor {
         
         this.setDetectorTabNames("phase");
         this.init(false);
-        this.getCcdb().setVariation("default");
         this.getCcdb().init(Arrays.asList(new String[]{"/calibration/ftof/time_jitter"}));
     }
 

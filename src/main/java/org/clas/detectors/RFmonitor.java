@@ -27,7 +27,6 @@ public class RFmonitor extends DetectorMonitor {
     public RFmonitor(String name) {
         super(name);
         
-        this.getCcdb().setVariation("default");
         this.getCcdb().init(Arrays.asList(new String[]{"/calibration/eb/rf/config"}));
 
         this.setDetectorTabNames("adc","tdc","time");

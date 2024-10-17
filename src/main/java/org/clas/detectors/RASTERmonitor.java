@@ -23,7 +23,6 @@ public class RASTERmonitor extends DetectorMonitor {
         super(name);
         this.setDetectorTabNames("R1occupancy");
         this.init(false);
-        this.getCcdb().setVariation("default");
         this.getCcdb().init(Arrays.asList(new String[]{"/calibration/raster/adc_to_position"}));
     }
 

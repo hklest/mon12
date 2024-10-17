@@ -17,7 +17,6 @@ public class FTHODOmonitor extends DetectorMonitor {
     public FTHODOmonitor(String name) {
         super(name);
 
-        this.getCcdb().setVariation("default");
         this.getCcdb().init(Arrays.asList(new String[]{
             "/geometry/ft/fthodo"}));
         geometry = this.getCcdb().getConstants(11, "/geometry/ft/fthodo");

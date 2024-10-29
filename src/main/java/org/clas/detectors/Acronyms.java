@@ -14,6 +14,8 @@ public class Acronyms  extends JTabbedPane {
         this.add("Acronyms", this.acronymsPanel);
         JTextPane acronymsDefinitions = new JTextPane();
         acronymsDefinitions.setText("Detectors:\n\n"
+                + "AHDC:\t\tALERT Hyperbolic Drift Chamber \n"
+                + "ATOF:\t\tALERT Time Of Flight \n"
                 + "BAND:\t\tBackward Angle Neutron Detector \n"
                 + "BMT:\t\tBarrel Micromegas Tracker \n"
                 + "BST:\t\tBarrel Silicon Vertex Tracker \n\n"

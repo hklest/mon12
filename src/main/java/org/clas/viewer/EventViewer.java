@@ -98,6 +98,8 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
     public BeamMonitor beamMonitor = null;
 
     public final void initMonitors() {
+        this.monitors.put("AHDC",        new AHDCmonitor("AHDC"));
+        this.monitors.put("ATOF",        new ATOFmonitor("ATOF"));
         this.monitors.put("BAND",        new BANDmonitor("BAND"));
         this.monitors.put("BMT",         new BMTmonitor("BMT"));
         this.monitors.put("BST",         new BSTmonitor("BST"));
@@ -282,6 +284,10 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
            this.monitors.get("CND").isActive()) {
            this.createSummary("CD",2,2);
         }
+        if(this.monitors.get("AHDC").isActive() ||
+           this.monitors.get("ATOF").isActive()) {
+           this.createSummary("ALERT",1,2);
+        }
         if(this.monitors.get("FTCAL").isActive() ||
            this.monitors.get("FTHODO").isActive() ||
            this.monitors.get("FTTRK").isActive()) {
@@ -444,6 +450,11 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
                 String fileName = dir + "/summary_CD_" + tstamp + ".png";
                 this.CLAS12Canvas.getCanvas("CD").save(fileName);
                 ret.put(fileName, "Summary plots for the central detector");
+            }
+            if (this.CLAS12Canvas.getCanvas("ALERT") != null) {
+                String fileName = dir + "/summary_ALERT_" + tstamp + ".png";
+                this.CLAS12Canvas.getCanvas("ALERT").save(fileName);
+                ret.put(fileName, "Summary plots for the ALERT detector");
             }
             if (this.CLAS12Canvas.getCanvas("FT") != null) {
                 String fileName = dir + "/summary_FT_" + tstamp + ".png";
@@ -719,6 +730,18 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
                 this.CLAS12Canvas.getCanvas("CD").draw(this.monitors.get("BST").getDetectorSummary().getH2F("summary"));
         }
 
+        // ALERT:
+        if(this.CLAS12Canvas!=null && this.CLAS12Canvas.getCanvas("ALERT")!=null) {
+            // AHDC
+            this.CLAS12Canvas.getCanvas("ALERT").cd(0);
+            if(this.monitors.get("AHDC").isActive() && this.monitors.get("AHDC").getDetectorSummary()!=null) 
+                this.CLAS12Canvas.getCanvas("ALERT").draw(this.monitors.get("AHDC").getDetectorSummary().getH1F("summary"));
+            // ATOF
+            this.CLAS12Canvas.getCanvas("ALERT").cd(1);
+            if(this.monitors.get("ATOF").isActive() && this.monitors.get("ATOF").getDetectorSummary()!=null) 
+                this.CLAS12Canvas.getCanvas("ALERT").draw(this.monitors.get("ATOF").getDetectorSummary().getH1F("summary"));
+        }
+                
         // FT:
         if(this.CLAS12Canvas!=null && this.CLAS12Canvas.getCanvas("FT")!=null) {
             // FTCAL
@@ -777,6 +800,10 @@ public class EventViewer implements IDataEventListener, DetectorListener, Action
             if (this.CLAS12Canvas.getCanvas("CD") != null) {
                 this.CLAS12Canvas.getCanvas("CD").initTimer(time);
                 this.CLAS12Canvas.getCanvas("CD").update();
+            }
+            if (this.CLAS12Canvas.getCanvas("ALERT") != null) {
+                this.CLAS12Canvas.getCanvas("ALERT").initTimer(time);
+                this.CLAS12Canvas.getCanvas("ALERT").update();
             }
             if (this.CLAS12Canvas.getCanvas("FT") != null) {
                 this.CLAS12Canvas.getCanvas("FT").initTimer(time);

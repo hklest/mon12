@@ -1,14 +1,12 @@
 package org.clas.detectors;
 
 
-import java.util.Arrays;
 import org.clas.viewer.DetectorMonitor;
 import org.jlab.groot.data.H1F;
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.group.DataGroup;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
-import org.jlab.utils.groups.IndexedTable;
 
 /**
  *
@@ -116,8 +114,8 @@ public class ATOFmonitor  extends DetectorMonitor {
                     int wire = (layer-1)*100+comp;
                     this.getDataGroup().getItem(0,0,0).getH2F("occADC").fill(comp, layer);
                     this.getDataGroup().getItem(0,0,0).getH1F("occADC1D").fill(wire);
-                    this.getDataGroup().getItem(0,0,0).getH2F("adc_s1").fill(adc*1.0,wire);
-                    this.getDataGroup().getItem(0,0,0).getH2F("fadc_time_s1").fill(time,wire);
+                    this.getDataGroup().getItem(0,0,0).getH2F("adc").fill(adc*1.0,wire);
+                    this.getDataGroup().getItem(0,0,0).getH2F("time").fill(time,wire);
                     this.getDetectorSummary().getH1F("summary").fill(wire);
                     
                     

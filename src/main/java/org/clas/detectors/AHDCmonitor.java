@@ -1,14 +1,12 @@
 package org.clas.detectors;
 
 
-import java.util.Arrays;
 import org.clas.viewer.DetectorMonitor;
 import org.jlab.groot.data.H1F;
 import org.jlab.groot.data.H2F;
 import org.jlab.groot.group.DataGroup;
 import org.jlab.io.base.DataBank;
 import org.jlab.io.base.DataEvent;
-import org.jlab.utils.groups.IndexedTable;
 
 /**
  *
@@ -42,23 +40,23 @@ public class AHDCmonitor  extends DetectorMonitor {
         DataGroup sum = new DataGroup(1,1);
         sum.addDataSet(summary, 0);
         this.setDetectorSummary(sum);
-        H2F rawADC = new H2F("rawADC", "rawADC", 6, 0.5, 6.5, 8, 0.5, 8.5);
+        H2F rawADC = new H2F("rawADC", "rawADC", 16, 0.5, 16.5, 80, 0.5, 80.5);
         rawADC.setTitleY("component");
         rawADC.setTitleX("layer");
-        H2F occADC = new H2F("occADC", "occADC", 6, 0.5, 6.5, 8, 0.5, 8.5);
+        H2F occADC = new H2F("occADC", "occADC", 16, 0.5, 16.5, 80, 0.5, 80.5);
         occADC.setTitleY("component");
         occADC.setTitleX("layer");
         occADC.setTitle("ADC Occupancy");
-        H1F occADC1D = new H1F("occADC1D", "occADC1D", 48, 0.5, 48.5);
-        occADC1D.setTitleX("Wire (Wire/layer");
+        H1F occADC1D = new H1F("occADC1D", "occADC1D", 5000, 0.5, 5000.5);
+        occADC1D.setTitleX("Wire");
         occADC1D.setTitleY("Counts");
         occADC1D.setTitle("ADC Occupancy");
         occADC1D.setFillColor(3);
         
-        H2F adc = new H2F("adc", "adc", 150, 0, 15000, 8, 0.5, 8.5);
+        H2F adc = new H2F("adc", "adc", 150, 0, 15000, 8, 0.5, 8000.5);
         adc.setTitleX("ADC - value");
         adc.setTitleY("Wire");
-        H2F time = new H2F("time", "time", 80, 0, 400, 8, 0.5, 8.5);
+        H2F time = new H2F("time", "time", 80, 0, 400, 8, 0.5, 8000.5);
         time.setTitleX("Time (ns)");
         time.setTitleY("Wire");
         
@@ -112,12 +110,12 @@ public class AHDCmonitor  extends DetectorMonitor {
                                
 //                System.out.println("ROW " + loop + " SECTOR = " + sector + " LAYER = " + layer + " COMPONENT = " + comp + " ORDER + " + order +
 //                      " ADC = " + adc + " TIME = " + time); 
-                if(adc>0 && time>0) {
+                if(adc>=0 && time>0) {
                     int wire = (layer-1)*100+comp;
                     this.getDataGroup().getItem(0,0,0).getH2F("occADC").fill(comp, layer);
                     this.getDataGroup().getItem(0,0,0).getH1F("occADC1D").fill(wire);
-                    this.getDataGroup().getItem(0,0,0).getH2F("adc_s1").fill(adc*1.0,wire);
-                    this.getDataGroup().getItem(0,0,0).getH2F("fadc_time_s1").fill(time,wire);
+                    this.getDataGroup().getItem(0,0,0).getH2F("adc").fill(adc*1.0,wire);
+                    this.getDataGroup().getItem(0,0,0).getH2F("time").fill(time,wire);
                     this.getDetectorSummary().getH1F("summary").fill(wire);
                     
                     
